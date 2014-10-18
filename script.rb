@@ -32,7 +32,7 @@ class RippedImage
   fragment_height = (height / @n).to_i
 
 
-  pixels = []
+  final_image = Magick::Image.new(width,height)
 
   i = 0
   0.upto(@n-1) do |y|
@@ -44,16 +44,10 @@ class RippedImage
         image = images[i-1]
       end
 
-      pixels << image.get_pixels(x*fragment_width, y*fragment_height, fragment_width, fragment_height)
+      fragment = image.get_pixels(x*fragment_width, y*fragment_height, fragment_width, fragment_height)
+      final_image.store_pixels(x*fragment_width, y*fragment_height, fragment_width, fragment_height, fragment)
     end
   end
-
-  pixels.flatten!
-
-
-  final_image = Magick::Image.new(width,height)
-
-  final_image.store_pixels(0, 0, width, height, pixels) 
 
   final_image.write("#{File.dirname(__FILE__)}/final_image/final_image.jpg")
 
